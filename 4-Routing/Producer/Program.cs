@@ -1,4 +1,22 @@
-﻿using System.Text;
+﻿/*
+  Sì, hai capito correttamente. Solo una correzione nell’ultima frase: con "both" ricevono AnalyticsConsumer 
+  e PaymentsConsumer. Il Producer invia soltanto.
+  
+  Nel codice attuale il percorso è:
+     Producer → exchange "routing" → coda → consumer
+
+  RabbitMQ instrada quindi il messaggio verso le code, dalle quali i consumer lo ricevono.
+    1. AnalyticsConsumer crea una propria coda e, con due QueueBindAsync, 
+       la collega all’exchange per ricevere messaggi con chiave "analyticsonly" oppure "both".
+    2. PaymentsConsumer crea un’altra coda e la collega allo stesso exchange per ricevere 
+       messaggi con chiave "paymentsonly" oppure "both".
+    3. Producer pubblica un messaggio sull’exchange "routing", di tipo direct. 
+       L’exchange confronta la routing key del messaggio con quelle dei binding:
+
+*/
+
+
+using System.Text;
 using RabbitMQ.Client;
 
 

@@ -18,12 +18,18 @@ await channel.ExchangeDeclareAsync(
 
 var queueName = (await channel.QueueDeclareAsync()).QueueName;
 
+
+// La coda Analytics accetta le chiavi analyticsonly e both.
 await channel.QueueBindAsync(
     queue: queueName,
     exchange: "routing",
     routingKey: "analyticsonly"
 );
 
+/*
+    Con "both", il producer pubblica una volta sola: 
+    l’exchange mette una copia del messaggio in ciascuna coda, e ogni consumer stampa la propria copia.
+*/
 await channel.QueueBindAsync(
     queue: queueName,
     exchange: "routing",
