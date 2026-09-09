@@ -2,35 +2,44 @@
 
 ## Struttura del progetto
 
-Il repository contiene un esercizio C# iniziale in `1-First-RabbitMQ-App/Producer/`:
-- `Producer.csproj`: applicazione console destinata a `net10.0`, con nullable reference types e implicit usings abilitati.
-- `Program.cs`: entry point con istruzioni top-level; attualmente stampa `Hello, World!`.
-- `.gitignore`: esclude output di compilazione, file IDE e `.env`.
+Il repository contiene quattro esercizi con applicazioni console C#:
+- `1-First-RabbitMQ-App/`: Producer e Consumer.
+- `2-Competing-Consumers/`: Producer e Consumer.
+- `3-Pub-Sub/`: Producer, FirstConsumer e SecondConsumer.
+- `4-Routing/`: Producer, AnalyticsConsumer e PaymentsConsumer.
 
-Non sono presenti solution, progetti di test, asset frontend o configurazioni Docker. Nonostante il nome del repository, il progetto non contiene ancora dipendenze o integrazioni RabbitMQ.
+I dieci progetti usano `net10.0`, `RabbitMQ.Client` **7.2.2**, nullable reference types e implicit usings. Gli entry point sono nei rispettivi `Program.cs`. Non sono presenti solution o progetti di test.
 
 ## Comandi di sviluppo
 
 Eseguire dalla radice con un SDK .NET 10 disponibile:
 
 ```powershell
-dotnet build .\1-First-RabbitMQ-App\Producer\Producer.csproj
-dotnet run --project .\1-First-RabbitMQ-App\Producer\Producer.csproj --no-build
+dotnet build .\4-Routing\Producer\Producer.csproj
+dotnet run --project .\4-Routing\Producer\Producer.csproj --no-build
 ```
 
-Il primo comando compila ed esegue il ripristino implicito; il secondo avvia la build esistente. Concordare prima eventuali installazioni di SDK o nuove dipendenze. Non eseguire comandi sulla sola radice aspettandosi una solution.
+Adattare il percorso al progetto interessato. La build esegue il ripristino implicito; `--no-build` richiede una build esistente. In `4-Routing`, con RabbitMQ su `localhost`, compilare e avviare prima entrambi i consumer, attendere la registrazione dei binding, poi avviare il producer.
+
+## RabbitMQ e routing
+
+- Usare le API v7 asincrone: `CreateChannelAsync`, `BasicPublishAsync` e `BasicConsumeAsync`; distinguere pubblicazione da registrazione del consumer.
+- I gestori `ReceivedAsync` devono restituire un `Task`: usare `Task.CompletedTask` quando il lavoro e' sincrono.
+- `QueueBindAsync` configura un collegamento exchange-coda; non pubblica messaggi.
+- In `4-Routing`, l'exchange `routing` e' `direct`: Analytics accetta `analyticsonly` e `both`; Payments accetta `paymentsonly` e `both`. Le chiavi devono coincidere esattamente. `both` e' una chiave convenzionale, non speciale.
+- `autoAck: true` conferma alla consegna, senza attendere l'elaborazione. `mandatory: false` consente lo scarto dei messaggi non instradabili, salvo alternate exchange configurato.
 
 ## Stile e nomi
 
-Per il nuovo codice C#, usare quattro spazi, `PascalCase` per tipi e membri pubblici, `camelCase` per parametri e variabili locali. Mantenere semplice l'entry point e usare file con nomi corrispondenti ai tipi introdotti. Rispettare la nullability abilitata; usare il suffisso `Async` per metodi asincroni. Il progetto non configura formatter, linter o `.editorconfig` dedicati.
+Usare quattro spazi, `PascalCase` per tipi e membri pubblici, `camelCase` per parametri e variabili locali. Rispettare nullability e stile esistente; commentare i parametri accanto alle chiamate quando richiesto.
 
 ## Verifica e test
 
-Non esistono framework di test o soglie di copertura configurati. Per modifiche al codice, compilare ed eseguire la console, verificando l'output atteso. Non presentare `dotnet test` senza test rilevati come prova di copertura. Quando autorizzati, preferire xUnit e nomi `Metodo_Scenario_RisultatoAtteso`; documentare il comando del nuovo progetto di test. Indicare sempre verifiche eseguite e limiti.
+Compilare i progetti modificati. Distinguere compilazione da verifica di invio/ricezione sul broker; dichiarare le prove non eseguite. Non presentare `dotnet test` senza test rilevati come copertura. Per sole modifiche documentali, verificare contenuto e diff.
 
 ## Commit e pull request
 
-La cronologia contiene un solo commit, `Inizializza repository con .gitignore per progetto .NET RabbitMQ`: non dimostra uno standard consolidato. Usare messaggi brevi, descrittivi e all'imperativo, coerenti con questo esempio. Nelle PR riportare scopo, file coinvolti, verifiche e issue collegate, se disponibili. Segnalare dipendenze aggiunte e cambiamenti incompatibili.
+Usare messaggi brevi, descrittivi e all'imperativo. Nelle PR riportare scopo, file coinvolti, verifiche, nuove dipendenze ed eventuali incompatibilita'.
 
 ## Regole operative e configurazione
 
