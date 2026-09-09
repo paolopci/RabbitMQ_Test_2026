@@ -15,6 +15,8 @@ await channel.ExchangeDeclareAsync(
     type: ExchangeType.Topic // instradamento tramite patter routing key
 );
 
+// producer invia 2 messaggi 
+// messaggio 1
 var userPaymentsMessage = "A european user paid for something";
 var userPaymentsBody = Encoding.UTF8.GetBytes(userPaymentsMessage);
 await channel.BasicPublishAsync(
@@ -25,6 +27,9 @@ await channel.BasicPublishAsync(
 
 Console.WriteLine($"Send message: {userPaymentsMessage}");
 
+
+// producer invia 2 messaggi 
+// messaggio 2
 var businessOrderMessage = "A european business ordered goods";
 
 var businessOrderBody = Encoding.UTF8.GetBytes(businessOrderMessage);
