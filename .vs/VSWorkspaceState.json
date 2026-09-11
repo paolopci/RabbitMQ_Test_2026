@@ -1,7 +1,9 @@
 {
   "ExpandedNodes": [
     "",
-    "\\1-First-RabbitMQ-App"
+    "\\1-First-RabbitMQ-App",
+    "\\1-First-RabbitMQ-App\\Consumer"
   ],
+  "SelectedNode": "\\1-First-RabbitMQ-App\\Consumer",
   "PreviewInSolutionExplorer": false
 }
